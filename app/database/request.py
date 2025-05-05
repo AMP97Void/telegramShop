@@ -65,6 +65,10 @@ async def additem_toAll(name: str, strenght: int, taste: str, description: str, 
         session.add(new_item)
         await session.commit()
         
+async def userInfo(tg_id: int):
+    async with async_session() as session:
+        return await session.scalar(select(User).where(User.tg_id == tg_id))
+        
 async def get_categories():
     async with async_session() as session:
         return await session.scalars(select(Category))

@@ -124,7 +124,6 @@ async def support(message: Message):
                      '\n_Версия бота_ *1.0*', parse_mode = 'Markdown') 
     
     
-    
 # КНОПКИ BUTTONS
 
 @router.message()
@@ -147,7 +146,7 @@ async def reply_to_buttons(message: Message):
                      '\n\n *1.5* Места встреч фиксированы и у нас нету такой функции, как доставка. Так что просьба не писать с просьбами привезти товар к вашему дома и тд.'
                      '\n',parse_mode = 'markdown')
     elif message.text == "📃 Список":
-        photo = FSInputFile(r"C:\Users\dmitr\Desktop\Aiogramm\photos\listPhoto.jpg")
+        photo = FSInputFile(r"photos\listPhoto.jpg")
         await message.answer_photo(photo)
         await message.answer('Выберите категорию товара', reply_markup=await kb.categories())
         
@@ -158,6 +157,37 @@ async def reply_to_buttons(message: Message):
             await message.answer("Вы вошли в Админ панель!", reply_markup=kb.apanel)
         else:
             await message.answer("Эта команда вам не доступна...")
+            
+    elif message.text == "💻 Профиль":
+        photo = FSInputFile(r"photos\MainPhoto.jpg")
+        await message.answer_photo(photo)
+        user = await rq.userInfo(tg_id = message.from_user.id)
+    
+
+    
+        if not user:
+            await message.answer("_Вы еще не зарегестрированы | Возникла ошибка!\n Введите_ /start", parse_mode="Markdown")
+            return
+        
+        text = ""
+        name = user.name or "Без имени"
+        username = f"@{user.userName}" if user.userName else "нет username" 
+        dataReg = user.data
+        text += f'💳 Баланс: {user.money}€\n'
+        f'🎁 Бонусы: {user.bonuce}шт\n' 
+        f'🏆 Награды: {user.admintag}\n'
+        f'➖➖➖➖➖➖➖➖➖➖➖\n'
+        f'💰 Всего пополнено: {user.money}€\n'
+    
+        await message.answer("Кнопка *заказать* была нажата", parse_mode = 'markdown')
+        await message.answer_photo(photo)
+        await message.answer('➖➖➖➖➖➖➖➖➖➖➖\n'
+                     f'👤 Логин: @{message.from_user.username}\n'
+                     f'🕜 Регистрация:  \n'
+                     f'🔑 ID: {message.from_user.id}\n'
+                     '➖➖➖➖➖➖➖➖➖➖➖\n'
+                     + text +
+                     '🎉 Куплено товаров: 0шт', reply_markup = kb.markup2)
 
 # КOЛЛБЕКИ CALLBACK
 

@@ -8,7 +8,7 @@ from app.database.models import async_main
 
 async def main():
     await async_main()
-    bot = Bot(token = '7610953420:AAFJSJneepus_P5BYdeHolzEEOK-8jA107g')
+    bot = Bot(token = 'Token')
     dp = Dispatcher() #Класс, который обрабатывает сообщения
     
     dp.include_routers(router1, router)

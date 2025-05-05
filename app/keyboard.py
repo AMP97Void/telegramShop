@@ -12,6 +12,11 @@ btnProfile = KeyboardButton(text = '💻 Профиль')
 btnApanel = KeyboardButton(text = '💻 Админ Панель')
 
 
+add = InlineKeyboardButton(text='💳Пополнить', callback_data='add')
+mybuy = InlineKeyboardButton(text='🛒Мои покупки', callback_data='myBuy')
+referal = InlineKeyboardButton(text='🗣Реферальная система', callback_data='referal')
+cupon = InlineKeyboardButton(text='🎁Активировать купон', callback_data='cupon')
+
 back = InlineKeyboardButton(text="🔙 Назад", callback_data="menu_main")
 order = InlineKeyboardButton(text="💳 Заказать", callback_data="strengt_main")
 back1 = InlineKeyboardButton(text="🔙 Назад", callback_data="strengt_main")
@@ -91,6 +96,11 @@ resize_keyboard=True
 )
 
 markup = InlineKeyboardMarkup(inline_keyboard=[[cb],[callback1]])
+
+markup2 = InlineKeyboardMarkup(inline_keyboard=[[add, mybuy],
+                                                [referal],
+                                                [cupon]])
+                               
 
 reply_comeback = InlineKeyboardMarkup(inline_keyboard=[[buy],[bck]])
 
