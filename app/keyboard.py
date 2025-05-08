@@ -12,7 +12,7 @@ btnProfile = KeyboardButton(text = '💻 Профиль')
 btnApanel = KeyboardButton(text = '💻 Админ Панель')
 
 
-add = InlineKeyboardButton(text='💳Пополнить', callback_data='add')
+add = InlineKeyboardButton(text='💳Пополнить', callback_data='replenish')
 mybuy = InlineKeyboardButton(text='🛒Мои покупки', callback_data='myBuy')
 referal = InlineKeyboardButton(text='🗣Реферальная система', callback_data='referal')
 cupon = InlineKeyboardButton(text='🎁Активировать купон', callback_data='cupon')

@@ -1,16 +1,14 @@
-from datetime import datetime
 
 import asyncio
 
 from aiogram import F, Router
 from aiogram.types import Message 
-from aiogram.filters import CommandStart, Command
-from aiogram.types import FSInputFile, CallbackQuery
+from aiogram.filters import  Command
+from aiogram.types import  CallbackQuery
 
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.storage.memory import MemoryStorage
-from sqlalchemy import select
+
 
 from aiogram.exceptions import TelegramForbiddenError, TelegramBadRequest
 
@@ -30,6 +28,9 @@ class NewItem(StatesGroup):
     quantity = State()
     category = State()
     next_state = State()
+
+class Bonus(StatesGroup):
+    name = State()
     
 class Broadcast(StatesGroup):
     text = State()
@@ -158,3 +159,28 @@ async def broadcast(message: Message, state: FSMContext):
             print(f"Ошибка при отправке {user_id}")
     
     await message.answer(f"✅ Рассылка завершена. Всего сообщений отправленно {x} пользователям!")
+    
+    await state.clear()
+    
+@router1.callback_query(F.data == "cupon")
+async def bonus(callback: CallbackQuery, state: FSMContext):
+    await callback.message.answer("🎁 _Для активации купона введите его название:_", parse_mode='Markdown')
+    await state.set_state(Bonus.name)
+    
+@router1.message(Bonus.name)
+async def Bous(message: Message,state: FSMContext):
+    await state.update_data(name=message.text)
+    data = await state.get_data()
+    
+    text = data["name"]
+    user = message.from_user.id
+    
+    
+    setting = await rq.set_bonuce(text, user)
+    
+    if setting:
+        await message.answer("✅ Бонус успешно активирован!")
+    else: 
+        await message.answer("Еще нету такого бонуса или превышено колл-во использований...")
+        
+    await state.clear()

@@ -1,6 +1,6 @@
 from app.database.models import async_session
 from datetime import datetime
-from app.database.models import User, Category, Product, Category2
+from app.database.models import User, Category, Product, Category2, Bonus, Purchase
 
 
 from sqlalchemy import select, update
@@ -89,3 +89,41 @@ async def broadcast_users():
     async with async_session() as session:
         result = await session.execute(select(User.tg_id))
         return [row[0] for row in result.fetchall()]
+
+async def new_bonus(name: str, reward: int):
+    async with async_session() as session:
+        chek = await session.scalar(select(Bonus).where(Bonus.name == name))
+
+        if not chek:
+            session.add(Bonus(name=name,
+                             reward=reward))
+            await session.commit()
+            return True  # пользователь был добавлен
+        return False  # пользователь уже есть
+
+async def set_bonuce(text: str, user: int):
+    async with async_session() as session:
+        bonus = await session.scalar(select(Bonus).where(Bonus.name == text))
+        chek = await session.scalar(select(Bonus.reward).where(Bonus.name == text))
+        userBonus = await session.scalar(select(User.bonuce).where(User.tg_id == user))
+        user = await session.scalar(select(User).where(User.tg_id == user))
+        
+        
+        if not chek or bonus.activations == bonus.availableActivations:
+            return False
+        
+        add = chek + userBonus
+        user.bonuce = add
+        bonus.activations = bonus.activations + 1
+        
+        await session.commit()
+        return True
+    
+async def userbuy(tg_id):
+    async with async_session() as session:
+        result = await session.execute(select(Purchase).where(Purchase.tg_id == tg_id))
+        if not result:
+            return False
+        return result.scalars().all()  # вернёт список строк
+        return True
+    

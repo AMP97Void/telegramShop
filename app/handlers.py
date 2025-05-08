@@ -2,7 +2,6 @@ from aiogram import F, Router
 from aiogram.types import Message 
 from aiogram.filters import CommandStart, Command
 from aiogram.types import FSInputFile, CallbackQuery
-import sqlite3
 import app.keyboard as kb 
 import app.database.request as rq
 
@@ -123,15 +122,41 @@ async def support(message: Message):
                      '\n\n_Если вы нашли какую-то ошибку или бот работает не корректо просьба сообщить об этом!_'
                      '\n_Версия бота_ *1.0*', parse_mode = 'Markdown') 
     
+@router.message(Command("newbonus"))
+async def new_bonus(message: Message):
+    user_id = message.from_user.id
+    chekadmin = await rq.chekAdmin(tg_id = user_id)
+    if chekadmin:
+        args1 = message.text.split(maxsplit=3)
+        if len(args1)<4 or args1[2] not in ["25", "50", "75", "100", "150", "200", "250", "350", "450", "500", "1000"]:
+            await message.reply("Неверный формат команды. Используй: /newbonuce <Название бонуса> <награда за бонус>")
+            return
+        
+        name = args1[1]
+        reward = args1[2]
+        
+        setB = await rq.new_bonus(name, reward)
+        
+        if setB:
+            await message.answer("Бонус установлен!")
+            
+        
+    else: 
+        await message.answer("_Это команда вам не доступна..._", parse_mode="Markdown")
+        
+            
+    
     
 # КНОПКИ BUTTONS
 
 @router.message()
 async def reply_to_buttons(message: Message):
     if message.text == "💳 Заказать":
-        await message.answer("Кнопка *заказать* была нажата", parse_mode = 'markdown')
+        photo = FSInputFile(r"photos\listPhoto.jpg")
+        await message.answer_photo(photo)
+        await message.answer('Выберите категорию товара', reply_markup=await kb.categories())
     elif message.text == "ℹ️ Помощь":
-        photoHelp = FSInputFile(r"C:\Users\dmitr\Desktop\Aiogramm\photos\rulesPhoto.jpg")
+        photoHelp = FSInputFile(r"photos\rulesPhoto.jpg")
         await message.answer_photo(photoHelp,'👥*Контакты:*'
                      '\n 🧖🏻[Администратор](https://t.me/A006MP_97)'
                      '\n\n📢*Ссылки:*'
@@ -160,10 +185,7 @@ async def reply_to_buttons(message: Message):
             
     elif message.text == "💻 Профиль":
         photo = FSInputFile(r"photos\MainPhoto.jpg")
-        await message.answer_photo(photo)
         user = await rq.userInfo(tg_id = message.from_user.id)
-    
-
     
         if not user:
             await message.answer("_Вы еще не зарегестрированы | Возникла ошибка!\n Введите_ /start", parse_mode="Markdown")
@@ -173,21 +195,20 @@ async def reply_to_buttons(message: Message):
         name = user.name or "Без имени"
         username = f"@{user.userName}" if user.userName else "нет username" 
         dataReg = user.data
-        text += f'💳 Баланс: {user.money}€\n'
-        f'🎁 Бонусы: {user.bonuce}шт\n' 
-        f'🏆 Награды: {user.admintag}\n'
-        f'➖➖➖➖➖➖➖➖➖➖➖\n'
-        f'💰 Всего пополнено: {user.money}€\n'
+        text += (
+            f'🕜 Регистрация: <code>{user.data}</code> \n'
+            '➖➖➖➖➖➖➖➖➖➖➖\n'
+            f'💳 Баланс: {user.money} €\n'
+            f'🎁 Бонусы: {user.bonuce} шт\n' 
+            f'🏆 Награды: {user.admintag}\n'
+            f'➖➖➖➖➖➖➖➖➖➖➖\n'
+            f'💰 Всего пополнено: {user.replenishment} €\n')
     
-        await message.answer("Кнопка *заказать* была нажата", parse_mode = 'markdown')
-        await message.answer_photo(photo)
-        await message.answer('➖➖➖➖➖➖➖➖➖➖➖\n'
+        await message.answer_photo(photo, '➖➖➖➖➖➖➖➖➖➖➖\n'
                      f'👤 Логин: @{message.from_user.username}\n'
-                     f'🕜 Регистрация:  \n'
-                     f'🔑 ID: {message.from_user.id}\n'
-                     '➖➖➖➖➖➖➖➖➖➖➖\n'
+                     f'🔑 ID: <code>{message.from_user.id}</code>\n'
                      + text +
-                     '🎉 Куплено товаров: 0шт', reply_markup = kb.markup2)
+                     '🎉 Куплено товаров: 0шт', parse_mode='HTML', reply_markup = kb.markup2)
 
 # КOЛЛБЕКИ CALLBACK
 
@@ -251,6 +272,17 @@ async def all_products(callback: CallbackQuery):
                               '\n❄️ Iceberg Menthol <i>(160MG Цена: 8.50)</i>', parse_mode='HTML', reply_markup = kb.main_menu)
     await callback.answer()
     
+@router.callback_query(F.data == "replenish")
+async def balance(callback: CallbackQuery):
+    await callback.answer("Увы, функция еще не доступна...")
+    
+@router.callback_query(F.data == "myBuy")
+async def mybuy(callback: CallbackQuery):
+    tg_id = callback.from_user.id
+    chek = await rq.userbuy(tg_id)
+    
+    if not chek:
+        await callback.message.answer("У вас еще нету покупок")
     
     
     
@@ -387,5 +419,4 @@ async def main_taste(callback: CallbackQuery):
 @router.callback_query(F.data == "main_menu")
 async def main_menu(callback: CallbackQuery):
     await callback.message.delete()
-    
     

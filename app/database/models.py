@@ -22,6 +22,8 @@ class User(Base):
     bonuce: Mapped[int] = mapped_column(Integer, default=0)
     money: Mapped[int] = mapped_column(Integer, default=0)
     admintag: Mapped[int] = mapped_column(Integer, default=0)
+    replenishment: Mapped[int] = mapped_column(Integer, default=0)
+    purchase: Mapped[int] = mapped_column(Integer, default=0) 
     data: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     
     
@@ -51,6 +53,28 @@ class Product(Base):
     
     category: Mapped[int] = mapped_column(ForeignKey('categories2.id'))
     
+class Purchase(Base):
+    __tablename__ = 'purchases'
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    
+    tg_id = mapped_column(BigInteger)
+    userName: Mapped[str] = mapped_column()
+    
+    products: Mapped[int] = mapped_column(default=0)
+    productName: Mapped[str] = mapped_column()
+    
+    data: Mapped[datetime] = mapped_column(DateTime)
+    
+class Bonus(Base):
+    __tablename__ = 'bonuses'
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    
+    name: Mapped[str] = mapped_column(String(45))
+    reward: Mapped[int] = mapped_column(Integer)
+    activations: Mapped[int] = mapped_column(Integer, default=0)
+    availableActivations: Mapped[int] = mapped_column(Integer, default=5)
     
     
 async def async_main():
