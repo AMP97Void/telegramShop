@@ -12,7 +12,7 @@ btnProfile = KeyboardButton(text = '💻 Профиль')
 btnApanel = KeyboardButton(text = '💻 Админ Панель')
 
 
-add = InlineKeyboardButton(text='💳Пополнить', callback_data='replenish')
+add = InlineKeyboardButton(text='💳Пополнить', callback_data='call')
 mybuy = InlineKeyboardButton(text='🛒Мои покупки', callback_data='myBuy')
 referal = InlineKeyboardButton(text='🗣Реферальная система', callback_data='referal')
 cupon = InlineKeyboardButton(text='🎁Активировать купон', callback_data='cupon')
@@ -39,11 +39,13 @@ alle = InlineKeyboardButton(text='Все товары', callback_data='alle')
 cb = InlineKeyboardButton(text='✅Получить', callback_data='call')
 callback1 = InlineKeyboardButton(text='➡️Пропустить', callback_data='call2')
 
-add = InlineKeyboardButton(text='💳 Пополнить', callback_data='call')
-myBuy = InlineKeyboardButton(text='💳 Пополнить', callback_data='call')
+add = InlineKeyboardButton(text='💳 Пополнить', callback_data='replenish')
+myBuy = InlineKeyboardButton(text='💳 Пополнить', callback_data='replenish')
 
 bck = InlineKeyboardButton(text='🔙 Назад', callback_data="go_back")
 buy = InlineKeyboardButton(text='💰 Купить товар', callback_data="go_back")
+
+mm = InlineKeyboardButton(text='🔙 Назад', callback_data="main_menu")
 
 users = InlineKeyboardButton(text='Список пользователей', callback_data="usersList")
 newsletter = InlineKeyboardButton(text='Масс. Рассылка', callback_data="sendall")
@@ -103,6 +105,8 @@ markup2 = InlineKeyboardMarkup(inline_keyboard=[[add, mybuy],
                                
 
 reply_comeback = InlineKeyboardMarkup(inline_keyboard=[[buy],[bck]])
+
+main_menu = InlineKeyboardMarkup(inline_keyboard=[[mm]])
 
 async def categories():
     all_categories = await get_categories()

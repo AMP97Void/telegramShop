@@ -273,8 +273,17 @@ async def all_products(callback: CallbackQuery):
     await callback.answer()
     
 @router.callback_query(F.data == "replenish")
-async def balance(callback: CallbackQuery):
-    await callback.answer("Увы, функция еще не доступна...")
+async def blance(callback: CallbackQuery):
+    await callback.message.answer("Увы, функция еще не доступна...")
+    
+@router.callback_query(F.data == "referal")
+async def refer(callback: CallbackQuery):
+    await callback.message.answer("<b>🗣Реферальная Система </b>\n\n "
+            "Чтобы пассивно капали деньги на баланс, многого не нужно. Зови друзей и получай с них монету😉\n\n"
+            "<b>У вас: 0 рефералов и вы заработали 0₽.</b>\n"
+            "Ссылка для приглашения: <code>https://www.youtube.com/watch?v=nwmJUxIc_3o</code>\n\n"
+            "<b>❗️Вы получаете 5% с пополнений рефералов.</b>", parse_mode= 'HTML', reply_markup=kb.main_menu)
+
     
 @router.callback_query(F.data == "myBuy")
 async def mybuy(callback: CallbackQuery):
